@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { Map, GoogleApiWrapper } from 'google-maps-react';
 
 const mapStyles = {
@@ -10,19 +10,35 @@ interface MapProps {
   google: any
 };
 
-const MapContainer: FC<MapProps> = ({ google }) => (
-  <Map
-    google={google}
-    // zoom={14}
-    style={mapStyles}
-    initialCenter={
-      {
-        lat: -1.2884,
-        lng: 36.8233
+const MapContainer: FC<MapProps> = ({ google }) => {
+  const [ mapCenterLocation, setMapCenterLocation ] = useState(null);
+
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition((position, error) => {
+      if (error) {
+        console.log('Error occurred.');
+      } else {
+        setMapCenterLocation(position.coords);
       }
-    }
-  />
-);
+    });
+  }, [mapCenterLocation]);
+
+  return (
+    <>
+      {mapCenterLocation
+        ? <Map
+            google={google}
+            style={mapStyles}
+            initialCenter={{
+              lat: mapCenterLocation?.latitude,
+              lng: mapCenterLocation?.longitude,
+            }}
+          />
+        : <h1>Loading...</h1>
+      }
+    </>
+  )
+};
 
 export default GoogleApiWrapper({
   apiKey: 'AIzaSyDy2cVdB1Pl8qjs89WbpMiYXvK7WuEvypY'
