@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from 'react';
-import { Map, GoogleApiWrapper } from 'google-maps-react';
+import { Map, GoogleApiWrapper, InfoWindow, Marker } from 'google-maps-react';
 
 const mapStyles = {
   width: '100%',
@@ -21,7 +21,7 @@ const MapContainer: FC<MapProps> = ({ google }) => {
         setMapCenterLocation(position.coords);
       }
     });
-  }, [mapCenterLocation]);
+  }, []);
 
   return (
     <>
@@ -33,7 +33,11 @@ const MapContainer: FC<MapProps> = ({ google }) => {
               lat: mapCenterLocation?.latitude,
               lng: mapCenterLocation?.longitude,
             }}
-          />
+          >
+            <Marker
+              position={{ lat: mapCenterLocation?.latitude, lng: mapCenterLocation?.longitude }}
+            />
+          </Map>
         : <h1>Loading...</h1>
       }
     </>
