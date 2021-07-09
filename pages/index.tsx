@@ -12,6 +12,7 @@ interface MapProps {
 
 const MapContainer: FC<MapProps> = ({ google }) => {
   const [ mapCenterLocation, setMapCenterLocation ] = useState(null);
+  const [ markers, setMarkers ] = useState([]);
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition((position, error) => {
@@ -21,6 +22,10 @@ const MapContainer: FC<MapProps> = ({ google }) => {
         setMapCenterLocation(position.coords);
       }
     });
+
+    const markersRes = fetch('')
+    .then(response => response.json())
+    .then(response => setMarkers(response));
   }, []);
 
   return (
@@ -29,14 +34,18 @@ const MapContainer: FC<MapProps> = ({ google }) => {
         ? <Map
             google={google}
             style={mapStyles}
+            zoom={15}
             initialCenter={{
               lat: mapCenterLocation?.latitude,
               lng: mapCenterLocation?.longitude,
             }}
           >
-            <Marker
-              position={{ lat: mapCenterLocation?.latitude, lng: mapCenterLocation?.longitude }}
-            />
+            {markers.map(marker => (
+              <Marker
+                key={marker.id}
+                position={{ lat: marker.position?.latitude, lng: marker.position?.longitude }}
+              />
+            ))}
           </Map>
         : <h1>Loading...</h1>
       }
